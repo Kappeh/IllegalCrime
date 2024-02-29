@@ -1,0 +1,4 @@
+name: IllegalCrimePaper
+version: '${version}'
+main: org.kappeh.illegalcrimepaper.IllegalCrimePaper
+api-version: '1.20'
