@@ -10,9 +10,11 @@ import org.checkerframework.common.reflection.qual.GetMethod;
 import org.jetbrains.annotations.NotNull;
 import org.kappeh.illegalcrimecore.IllegalCrimeCore;
 import org.kappeh.illegalcrimevelocity.chat.Chat;
+import org.kappeh.illegalcrimevelocity.commands.Commands;
 import org.kappeh.illegalcrimevelocity.data.DataGetter;
 import org.kappeh.illegalcrimevelocity.data.DefaultDataGetter;
 import org.kappeh.illegalcrimevelocity.data.LuckPermsDataGetter;
+import org.kappeh.illegalcrimevelocity.teleport.TeleportManager;
 import org.slf4j.Logger;
 
 @Plugin(
@@ -24,21 +26,23 @@ import org.slf4j.Logger;
         @Dependency(id = PluginIds.LUCK_PERMS, optional = true),
     }
 )
-public class IllegalCrimeVelocity {
-    @NotNull private final Logger logger;
-    @NotNull private final ProxyServer proxy;
+public final class IllegalCrimeVelocity {
+    private final @NotNull Logger logger;
+    private final @NotNull ProxyServer proxy;
 
-    @NotNull private DataGetter dataGetter;
+    private @NotNull DataGetter dataGetter;
+    private final @NotNull TeleportManager teleportManager;
 
-    @Inject public IllegalCrimeVelocity(@NotNull Logger logger, @NotNull ProxyServer proxy) {
+    @Inject public IllegalCrimeVelocity(final @NotNull Logger logger, final @NotNull ProxyServer proxy) {
         this.logger = logger;
         this.proxy = proxy;
 
         this.dataGetter = new DefaultDataGetter();
+        this.teleportManager = new TeleportManager(this);
     }
 
     @SuppressWarnings({"UnusedDeclaration"})
-    @Subscribe public void onProxyInitialization(@NotNull ProxyInitializeEvent event) {
+    @Subscribe public void onProxyInitialization(final @NotNull ProxyInitializeEvent event) {
         this.logger.info("Hello, " + IllegalCrimeCore.NAME + "!");
 
         if (this.proxy.getPluginManager().getPlugin(PluginIds.LUCK_PERMS).isPresent()) {
@@ -48,17 +52,23 @@ public class IllegalCrimeVelocity {
         if (!Chat.tryInit(this)) {
             this.logger.error("Chat features have been disabled!");
         }
+
+        Commands.register(this);
     }
 
-    @GetMethod @NotNull public final Logger getLogger() {
+    @GetMethod public @NotNull Logger getLogger() {
         return this.logger;
     }
 
-    @GetMethod @NotNull public final ProxyServer getProxy() {
+    @GetMethod public @NotNull ProxyServer getProxy() {
         return this.proxy;
     }
 
-    @GetMethod @NotNull public final DataGetter getDataGetter() {
+    @GetMethod public @NotNull DataGetter getDataGetter() {
         return this.dataGetter;
+    }
+
+    @GetMethod public @NotNull TeleportManager getTeleportManager() {
+        return this.teleportManager;
     }
 }

@@ -42,7 +42,7 @@ tasks.withType<JavaCompile>().configureEach {
 }
 
 tasks.named<ShadowJar>("shadowJar") {
-    relocate("de.themoep.minedown", "org.kappeh.myvelocityplugin.libraries.minedown")
+    relocate("de.themoep.minedown", "org.kappeh.illegalcrimevelocity.libraries.minedown")
 }
 
 tasks.build {

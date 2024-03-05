@@ -1,5 +1,8 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     id("java")
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "org.kappeh"
@@ -40,6 +43,14 @@ tasks.withType<JavaCompile>().configureEach {
     if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible) {
         options.release.set(targetJavaVersion)
     }
+}
+
+tasks.named<ShadowJar>("shadowJar") {
+    relocate("org.kappeh.illegalcrimecore", "org.kappeh.illegalcrimepaper.libraries.illegalcrimecore")
+}
+
+tasks.build {
+    dependsOn("shadowJar")
 }
 
 tasks.processResources {

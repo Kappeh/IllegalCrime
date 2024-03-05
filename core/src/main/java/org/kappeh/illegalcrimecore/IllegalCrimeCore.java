@@ -2,6 +2,7 @@ package org.kappeh.illegalcrimecore;
 
 import org.jetbrains.annotations.NotNull;
 
-public class IllegalCrimeCore {
-    @NotNull public static final String NAME = "IllegalCrime";
+public final class IllegalCrimeCore {
+    public static final @NotNull String NAME = "IllegalCrime";
+    public static final @NotNull String ID = "illegalcrime";
 }
