@@ -2,3 +2,8 @@ name: IllegalCrimePaper
 version: '${version}'
 main: org.kappeh.illegalcrimepaper.IllegalCrimePaper
 api-version: '1.20'
+commands:
+  foo:
+    description: Command used for debugging
+    usage: /foo
+    permission: illegalcrime.foo

@@ -25,6 +25,7 @@ public final class TeleportCommand implements SimpleCommand {
     ) {
         final CommandMeta meta = commandManager.metaBuilder(TeleportCommand.NAME)
             .plugin(plugin)
+            .aliases("tp", "teleport")
             .build();
 
         final TeleportCommand command = new TeleportCommand(plugin);
@@ -62,16 +63,13 @@ public final class TeleportCommand implements SimpleCommand {
     }
 
     @Override public void execute(final @NotNull Invocation invocation) {
-        if (invocation.arguments().length == 1) {
-            this.executeTeleportToPlayer(invocation);
-        } else {
-            final Component errorMessage = Component.text("Unknown or incomplete command").color(NamedTextColor.RED);
-            invocation.source().sendMessage(errorMessage);
+        if (invocation.arguments().length != 1) {
+            invocation.source().sendMessage(Component.text("Unknown or incomplete command").color(NamedTextColor.RED));
+            return;
         }
-    }
 
-    private void executeTeleportToPlayer(final @NotNull Invocation invocation) {
         final CommandSource source = invocation.source();
+
         if (!(source instanceof Player sourcePlayer)) {
             source.sendMessage(Component.text("Only players can run this command").color(NamedTextColor.RED));
             return;
@@ -81,10 +79,10 @@ public final class TeleportCommand implements SimpleCommand {
 
         final Player targetPlayer = this.plugin.getProxy().getPlayer(targetUsername).orElse(null);
         if (targetPlayer == null) {
-            sourcePlayer.sendMessage(Component.text("Could not find player").color(NamedTextColor.RED));
+            sourcePlayer.sendMessage(Component.text("Could not find target player").color(NamedTextColor.RED));
             return;
         }
 
-        this.plugin.getTeleportManager().teleport(sourcePlayer, targetPlayer);
+        this.plugin.getTeleportManager().requestTeleport(sourcePlayer, targetPlayer);
     }
 }

@@ -2,13 +2,20 @@ package org.kappeh.illegalcrimevelocity;
 
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.proxy.ServerConnection;
+import com.velocitypowered.api.proxy.messages.ChannelMessageSource;
+import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import org.checkerframework.common.reflection.qual.GetMethod;
 import org.jetbrains.annotations.NotNull;
 import org.kappeh.illegalcrimecore.IllegalCrimeCore;
+import org.kappeh.illegalcrimecore.messages.ChannelIds;
+import org.kappeh.illegalcrimecore.messages.Messages;
+import org.kappeh.illegalcrimecore.messages.Serialization;
 import org.kappeh.illegalcrimevelocity.chat.Chat;
 import org.kappeh.illegalcrimevelocity.commands.Commands;
 import org.kappeh.illegalcrimevelocity.data.DataGetter;
@@ -54,6 +61,20 @@ public final class IllegalCrimeVelocity {
         }
 
         Commands.register(this);
+
+        this.proxy.getChannelRegistrar().register(MinecraftChannelIdentifier.from(ChannelIds.TELEPORT_WORLD_INFO.full()));
+    }
+
+    @Subscribe void onPluginMessageFromBackend(PluginMessageEvent event) {
+        final ChannelMessageSource source =  event.getSource();
+        if (!(source instanceof ServerConnection serverConnection)) {
+            return;
+        }
+
+        if (event.getIdentifier().getId().equals(ChannelIds.TELEPORT_WORLD_INFO.full())) {
+            final Messages.WorldResponse response = Serialization.deserialize(event.getData(), Messages.WorldResponse.class);
+            this.teleportManager.onResponse(response);
+        }
     }
 
     @GetMethod public @NotNull Logger getLogger() {
